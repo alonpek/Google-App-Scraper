@@ -4,7 +4,7 @@ var gplay = require('google-play-scraper');
 gplay.search({
     term: process.argv[2],
     num: 25,
-    throttle: 5, //To avoid hitting throttling limit
-    fullDetail:True
+    throttle: 10, //To avoid hitting throttling limit
+    fullDetail:true
 }).then(console.log);
 

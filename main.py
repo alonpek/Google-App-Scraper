@@ -8,20 +8,26 @@ import shutil
 
 term_list = ["emotion tracking", "emotion", "mood tracking", "mood", "stress", "stress tracking"]
 
+
 # If unhandledPromiseRejectionWarning is raised, connect to a different IP address
+
+
 
 for term in term_list:
     print("term:", term)
+
+    res_stdout = muterun_js('general_info.js', term).stdout.decode('utf-8')
+
+    try:
+        app_data = demjson.decode(res_stdout)
+    except demjson.JSONDecodeError:
+        print("PROBLEM: Blocked by app store, please change IP address")
+        break
+
     # Make a folder for each search term
     if os.path.exists(term):
         shutil.rmtree(term)
     os.makedirs(term)
-
-    res_stdout = muterun_js('general_info.js', term).stdout.decode('utf-8')
-    print(res_stdout)
-
-    app_data = demjson.decode(res_stdout)
-    #print(app_data)
 
     # open a file for writing
     path = os.path.join(term, term + '.csv')
@@ -39,9 +45,10 @@ for term in term_list:
             writer.writerow(app.values())
 
     for app in app_data:
-        if os.path.exists(os.path.join(term, 'reviews')):
-            shutil.rmtree(os.path.join(term, 'reviews'))
-        os.makedirs(os.path.join(term, 'reviews'))
+        if not os.path.exists(os.path.join(term, 'reviews')):
+            os.makedirs(os.path.join(term, 'reviews'))
+            #shutil.rmtree(os.path.join(term, 'reviews'))
+       # os.makedirs(os.path.join(term, 'reviews'))
 
 
         path = os.path.join(term, 'reviews', app['title'] + '.csv')
